@@ -7,6 +7,8 @@ import serve from 'rollup-plugin-serve';
 import rollupSvelte from 'rollup-plugin-svelte';
 import rollupSwc from 'rollup-plugin-swc3';
 import rollupCleanup from 'rollup-plugin-cleanup';
+import chokidar from 'chokidar';
+import puppeteer from 'puppeteer';
 
 import { less } from 'svelte-preprocess-less';
 import sveltePreprocess from 'svelte-preprocess';
@@ -119,3 +121,44 @@ export default {
             }),
     ],
 };
+
+
+(async () => {
+    // Launch the browser and open a new blank page
+    const browser = await puppeteer.launch({headless:false, args: ['--no-sandbox']});
+    const page = await browser.newPage();
+  
+    await page.setViewport({width: 1080, height: 1024});
+    // Navigate the page to a URL
+    await page.goto('https://client-index-ivo-esm.dev.windy.com/developer-mode');
+  
+    // Set screen size
+    await page.setViewport({width: 1080, height: 1024});
+  
+    // Type into search box
+   // await page.type('.devsite-search-field', 'automate beyond recorder');
+  
+    // Wait and click on first result
+    //const searchResultSelector = '.devsite-result-item-link';
+    //await page.waitForSelector(searchResultSelector);
+    //await page.click(searchResultSelector);
+  
+    // Locate the full title with a unique string
+    //const textSelector = await page.waitForSelector(
+    //  'text/Customize and automate'
+    //);
+    //const fullTitle = await textSelector?.evaluate(el => el.textContent);
+  
+    // Print the full title
+    //console.log('The title of this blog post is "%s".', fullTitle);
+    setTimeout(()=> browser.close(),  10000);
+  })();
+
+
+const watcher = chokidar.watch('dist/**');
+watcher.on("change",()=>{
+    console.log("dist has changed,  reload browser");
+    
+
+});
+

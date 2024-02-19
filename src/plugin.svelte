@@ -2,14 +2,17 @@
     { title }
 </div>
 <section class="plugin__content">
-    <div
+    <div 
+        bind:this = {refs.close}
+
         class="plugin__title plugin__title--chevron-back"
         on:click={ () => bcast.emit('rqstOpen', 'menu') }
     >
     { title }
     </div>
-    Put your plugin code here
+    Put your plugin code here, and  and and
 </section>
+
 <script lang="ts">
     import bcast from "@windy/broadcast";
     import { onDestroy, onMount } from 'svelte';
@@ -18,13 +21,16 @@
 
     const { title } = config;
 
+    let refs={};
 
     export const onopen = (_params: unknown) => {
         // Your plugin was opened with parameters parsed from URL
         // or with LatLon object if opened from contextmenu
     };
 
+
     onMount(() => {
+        console.log(refs);
         // Your plugin was mounted
     });
 
