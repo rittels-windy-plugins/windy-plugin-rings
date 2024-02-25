@@ -32,6 +32,10 @@
     },
     "homepage": "https://docs.windy-plugins.com/",
     "dependencies": {
-        "@windycom/plugin-devtools": "^1.0.8"
+        "@windycom/plugin-devtools": "^1.0.8",
+        "rollup-plugin-livereload":"",
+        "less":"",
+        "ts-import":""
+        
     }
 }

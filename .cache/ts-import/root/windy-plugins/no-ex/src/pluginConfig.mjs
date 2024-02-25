@@ -1,6 +1,4 @@
-import type { ExternalPluginConfig } from '@windy/interfaces';
-
-const config: ExternalPluginConfig = {
+const config = {
     name: 'windy-plugin-no-ex',
     version: '0.1.0',
     icon: '🔌',
@@ -12,5 +10,4 @@ const config: ExternalPluginConfig = {
     mobileUI: 'fullscreen',
     //routerPath: '/my-plugin',
 };
-
 export default config;
