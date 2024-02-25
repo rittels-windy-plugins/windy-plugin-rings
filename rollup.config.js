@@ -23,12 +23,17 @@ const config = (await tsImport.load('./src/pluginConfig.ts')).default;
 const { name } = config;
 const fileName = name.match(/windy-plugin-(.*)/)[1];
 
+let port = 9999;
+if(process.argv[4] && process.argv[4].match(/(\d{4})/)){
+    port = +process.argv[4].match(/(\d{4})/)[0];
+    console.log(port);
+}
+
 const buildConfigurations = {
     src: {
         input: `src/${fileName}.svelte`,
         out: 'plugin',
     },
-    
 };
 
 const requiredConfig = process.env.CONFIG || 'src';
@@ -94,7 +99,7 @@ export default {
         serve({
             contentBase: 'dist',
             host: 'localhost',
-            port: 9999,
+            port,
             headers: {
                 'Access-Control-Allow-Origin': '*',
             },
