@@ -7,9 +7,6 @@ import serve from 'rollup-plugin-serve';
 import rollupSvelte from 'rollup-plugin-svelte';
 import rollupSwc from 'rollup-plugin-swc3';
 import rollupCleanup from 'rollup-plugin-cleanup';
-//import chokidar from 'chokidar';
-//import puppeteer from 'puppeteer';
-//import livereload from 'rollup-plugin-livereload';
 
 import { less } from 'svelte-preprocess-less';
 import sveltePreprocess from 'svelte-preprocess';
@@ -62,7 +59,6 @@ export default {
         clearScreen: false,
         
     },
-
     plugins: [
         makeGlobalCss(),
         typescript({
@@ -86,16 +82,6 @@ export default {
                 },
             },
         }),
-        /*
-        livereload({
-            watch: 'dist',
-            verbose: true,
-            delay:5000,
-            clientHostname: "https://www.google.com"
-          
-           
-          }),
-          */
         resolve({
             browser: true,
             mainFields: ['module', 'jsnext:main', 'main'],
@@ -120,14 +106,4 @@ export default {
     ],
 };
 
-/*
-
-const watcher = chokidar.watch('dist/**');
-watcher.on("change",()=>{
-    console.log("dist has changed,  reload browser");
-    
-
-});
-
-*/
 
