@@ -12,7 +12,11 @@ let { log } = console;
 
 function template(name, css) {
     return `
-const globalCss = "<style id='stylesheet-for-${name}'>${css}</style>";
+const globalCss = `+
+
+ "`<style id='stylesheet-for-"+name+"'>"+css+"</style>`;"+
+
+`
 let globalCssNode;
 function insertGlobalCss(){
     if(!document.querySelector("#stylesheet-for-${name}")){
