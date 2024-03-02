@@ -32,7 +32,6 @@
 
     plugins[name].exports = {
     };
-
 </script>
 
 <style lang="less">
