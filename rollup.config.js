@@ -12,6 +12,7 @@ import { less } from 'svelte-preprocess-less';
 import sveltePreprocess from 'svelte-preprocess';
 
 import * as tsImport from 'ts-import';
+import watchGlobs from 'rollup-plugin-watch-globs';
 
 import { makeGlobalCss } from './globalCss.js';
 
@@ -24,7 +25,7 @@ const { name } = config;
 const fileName = name.match(/windy-plugin-(.*)/)[1];
 
 let port = 9999;
-if(process.argv[4] && process.argv[4].match(/(\d{4})/)){
+if (process.argv[4] && process.argv[4].match(/(\d{4})/)) {
     port = +process.argv[4].match(/(\d{4})/)[0];
     console.log(port);
 }
@@ -60,11 +61,14 @@ export default {
     external: id => id.startsWith('@windy/'),
     watch: {
         include: ['src/**', 'examples/**'],
-        exclude: ['src/globalCss.js','node_modules/**'],
+        exclude: ['src/globalCss.js', 'node_modules/**'],
         clearScreen: false,
-        
+
     },
     plugins: [
+        watchGlobs([
+            'src/*.less'
+        ]),
         makeGlobalCss(),
         typescript({
             sourceMap: useSourceMaps,
