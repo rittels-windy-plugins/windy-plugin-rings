@@ -16,6 +16,8 @@ import watchGlobs from 'rollup-plugin-watch-globs';
 
 import { makeGlobalCss } from './globalCss.js';
 
+import {rebuildOnLessChange} from './rebuildOnLessChange.js';
+
 import { transformCodeToESMPlugin, keyPEM, certificatePEM } from '@windycom/plugin-devtools';
 
 const useSourceMaps = true;
@@ -63,12 +65,12 @@ export default {
         include: ['src/**', 'examples/**'],
         exclude: ['src/globalCss.js', 'node_modules/**'],
         clearScreen: false,
-
     },
     plugins: [
         watchGlobs([
             'src/*.less'
         ]),
+        rebuildOnLessChange(),
         makeGlobalCss(),
         typescript({
             sourceMap: useSourceMaps,

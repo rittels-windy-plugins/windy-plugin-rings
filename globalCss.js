@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// rollup-plugin that allows insertion and removal of a global css stylesheet.
+// src/global.less is compiled to css and added to globalCss.js,  which is then imported into plugin.svelte.
+
 import fs from 'fs';
 import path from 'path';
 import less from 'less';
