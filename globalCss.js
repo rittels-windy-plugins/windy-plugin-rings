@@ -11,8 +11,6 @@ import * as tsImport from 'ts-import';
 const { join } = path;
 let { log } = console;
 
-// Main
-
 function template(name, css) {
     return `
 const globalCss = `+
