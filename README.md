@@ -1,52 +1,25 @@
-# Windy Plugin Template
+# windy-plugin-rings
 
-Template for development of Windy Plugins.
 
-**Documentation at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
+This is a simple plugin that serves as a boilerplate for most of my plugins.  
 
-# CHANGELOG
+In general,  I want to use the large right-hand pane for settings and to show a lot of information.   This pane can then be collapsed,  while the plugin is still active.  The plugin is then marked as `W.plugins['windy-plugin-xxx'].isActive` .  
 
--   2.0.0
-    -   Completely new version of the plugin system based in Windy client v42+
--   1.0.0
-    -   New rollup compiler, no more riot architecture
-    -   Updated examples for Windy client v39
--   0.4.0
-    -   Added `plugin-data-loader` to the Plugins API
--   0.3.0
-    -   Examples moved to examples dir
--   0.2.0
-    -   Fixed wrong examples
--   0.1.1
-    -   Initial version of this repo
+The embedded box can be used to show important and minimal info while the rhpane is closed.   The embedded box also contains a list of active plugins,  so that one can switch between them.  
 
-# NOTES
+This allows one to use to use the flight planner  with the airspace plugin and the density altitude plugin,  for instance.
 
-Few additions to the rollup.config :
+Clicking the `X` on the top right of the plugins,  cleans up completely and removes all the map layers.
 
-- Do not use plugin.svelte,  rather name-of-the-plugin.svelte,  makes it easier to keep track when working on many plugins
-- Added a rollup plugin to inject global css stylesheets,  can also be removed when plugin is closed.
-- I prefer to keep `.less` file separate,  however, changes to `.less` file does not trigger a rebuild.  I created a hacky plugin to trigger rebuild,  this adds timestamp to @import file in svelte style tag.
+I still use the picker,  by adding drag listeners,  and divs to the left or right of the picker.  I can make my own marker,  but since the picker is already there and familiar to users,  I prefer to use it.  
 
-Exports:
+I created 2 internal plugins,  which are used by the main plugins:
 
-- Svelte plugins cannot export AFAICT,  so I add plugin[name].exports,  which can then be used by other plugins.
-- Plugins can be loaded,  with a function like this,  which returns a promise with the exports:
+- `windy-plugin-picker-tools`
+- `windy-plugin-embedbox`
 
-```
-function loadReqPlugin(url, name) {
-        if (plugins[name] && (plugins[name].isActive || plugins[name].isOpen))
-            return plugins[name].exports;
-        // .open(),  does not remove other plugins from embed window
-        return installExternalPlugin(url)
-            .then(() => plugins[name].open())
-            .then(() => plugins[name].exports);
-    }
-```
-- I prefer to keep plugins active,  while the `rhpane` is closed,  I then mark the active plugin as ```.isActive = true```
-- I add a function  `plugins[plugin].closeCompletely`  which then allows removal of all the listeneers and map elements.  
+These have exports attached as 
 
-Embedded plugins
+`W.plugins['windy-plugin-picker-tools'].exports`
 
-- I made a plugin `windy-plugin-embedbox` to send info in the embedded box.  This allows the use of both the `rhpane` and the `embedded` box.   WIP
-
+These are described in their respective repos.

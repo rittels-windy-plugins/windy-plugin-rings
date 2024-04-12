@@ -1,0 +1,31 @@
+.closing-x {
+    display  : block;
+    right    : 0px;
+    top      : 0.25em;
+    font-size: 30px;
+}
+
+.ring-line {
+    width: 100%; // inline block messes up vertical alignmentF
+
+    .closing-x {
+        position : relative;
+        display  : inline-block;
+        right    : 0em;
+        left     : 0em;
+        top      : 0em;
+        font-size: inherit;
+        margin   : 5px 10px;
+    }
+}
+
+.button {
+    background-color: var(--color-orange);
+    position        : absolute;
+    right           : 10px;
+    top             : 60px;
+}
+
+input[type="range"] {
+    width: 300px;
+}

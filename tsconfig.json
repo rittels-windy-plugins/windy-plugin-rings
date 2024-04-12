@@ -25,10 +25,10 @@
         "isolatedModules": true,
         "paths": {
             "@windy/*": [
-                "./node_modules/@windycom/plugin-devtools/types/*",
-                "./node_modules/@windycom/plugin-devtools/types/client/*",
+                "../node_modules/@windycom/plugin-devtools/types/*",
+                "../node_modules/@windycom/plugin-devtools/types/client/*",
             ],
         }
     },
-    "include": ["**/*.ts", "**/*.svelte"],
+    "include": ["**/*.ts", "**/*.svelte", "src/rings_main.js"],
 }
