@@ -123,7 +123,7 @@
 
     import { init, closeCompletely } from './rings_main.js';
     import { addDrag, showInfo, getWrapDiv } from './infoWinUtils.js';
-    import { getPickerMarker } from './picker-src/picker.js';
+    import { getPickerMarker } from './picker.js';
 
     import config from './pluginConfig';
     const { title, name } = config;
@@ -242,5 +242,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1714594173635';
+    @import 'rings.less?1714594924547';
 </style>

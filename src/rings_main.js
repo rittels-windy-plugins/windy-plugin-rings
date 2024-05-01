@@ -9,7 +9,7 @@ import * as singleclick from '@windy/singleclick';
 
 import config from './pluginConfig';
 import { insertGlobalCss, removeGlobalCss } from './globalCss.js';
-import { getPickerMarker } from './picker-src/picker.js';
+import { getPickerMarker } from './picker.js';
 
 const { name } = config;
 
