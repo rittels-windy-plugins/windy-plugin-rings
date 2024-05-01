@@ -3,7 +3,7 @@
         class="checkbox"
         class:checkbox--off={!thisPlugin.isFocused}
         style="position:relative; top:0.1em"
-        data-tooltip={`Click checkbox focus on the ${title} plugin.`}
+        data-tooltip={`Picker focused on the ${title} plugin.`}
         on:click={focus}>&nbsp;</span
     >
     <span
@@ -146,8 +146,8 @@
         let marker = getPickerMarker();
 
         let coordsPlace = store.get('windy-plugin-rings-show-coords');
-        if (coordsPlace == 'Right Picker') marker?.addRightPlugin(name);
-        if (coordsPlace == 'Left Picker') marker?.addLeftPlugin(name);
+        if (coordsPlace == 'Picker Right') marker?.addRightPlugin(name);
+        if (coordsPlace == 'Picker Left') marker?.addLeftPlugin(name);
         if (marker?.getParams()) {
             marker.openMarker(marker.getParams());
         }
@@ -242,5 +242,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1714594924547';
+    @import 'rings.less?1714597046828';
 </style>

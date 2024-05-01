@@ -1,7 +1,7 @@
 const config = {
     name: 'windy-plugin-rings',
     version: '0.2.0',
-    icon: '⛰',
+    icon: '⭕',
     title: 'Rings    ',
     description: 'Show range rings around the picker.',
     author: 'Rittels',
