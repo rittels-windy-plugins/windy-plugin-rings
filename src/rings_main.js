@@ -72,10 +72,17 @@ function closeCompletely() {
     pickerT.remLeftPlugin(name);
     pickerT.remRightPlugin(name);
 
+    // other plugins will try to defocus this plugin.
+    delete thisPlugin.focus;
+    delete thisPlugin.defocus;
+
     // clean up map layers
     removeAllRings();
 
     bcast.fire('rqstClose', name);
+
+    pickerT = null;  // in case plugin re-opened
+    
     hasHooks = false;
 }
 
@@ -131,6 +138,7 @@ function updateRadius() {
 }
 
 function updateRings(pos) {
+    //console.log(pickerT);
     pos = pos || (pickerT && pickerT.getParams());
     if (!pos) return;
 

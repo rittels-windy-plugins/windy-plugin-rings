@@ -72,7 +72,7 @@ export function addPickerCtrl(marker) {
     }
 
     marker.offClose = (cbf) => {
-        let fxIx = openFxs.findIndex(f => f.cbf == cbf);
+        let fxIx = closeFxs.findIndex(f => f.cbf == cbf);
         if (fxIx > -1) closeFxs.splice(fxIx, 1);
     }
 
@@ -127,6 +127,7 @@ export function addPickerCtrl(marker) {
     marker.getLeftPlugin = () => leftDivAct;
 
     marker.remLeftPlugin = plugin => {
+        if (leftPlugins.length == 0) return;  //just ignore if already empty,  plugin will be closed if drag is removed
         leftPlugins = leftPlugins.filter(p => p !== plugin);
         checkLeftDiv();
         checkIfMustClose();
@@ -141,6 +142,7 @@ export function addPickerCtrl(marker) {
     marker.getRightPlugin = () => rightPlugins[0];
 
     marker.remRightPlugin = plugin => {
+        if (rightPlugins.length == 0) return;
         rightPlugins = rightPlugins.filter(p => p !== plugin);
         checkRightDiv();
         checkIfMustClose();

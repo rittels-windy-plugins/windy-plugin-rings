@@ -1,7 +1,5 @@
 // mostly copied and slightly simplified windy DESKTOP picker.  // I am not bothering with mobile for now.
 
-// todo not yet showing coords in picker .
-
 import { map } from '@windy/map';
 import plugins from '@windy/plugins';
 import bcast from '@windy/broadcast';
