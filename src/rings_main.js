@@ -5,10 +5,11 @@
 import bcast from '@windy/broadcast';
 import { $, getRefs } from '@windy/utils';
 import { emitter as picker } from '@windy/picker';
+import * as singleclick from '@windy/singleclick';
 
 import config from './pluginConfig';
-import { loadPlugins } from './loadPlugins.js';
 import { insertGlobalCss, removeGlobalCss } from './globalCss.js';
+import { getPickerMarker } from './picker-src/picker.js';
 
 const { name } = config;
 
@@ -16,46 +17,55 @@ const { name } = config;
 let thisPlugin, refs, node;
 
 let hasHooks = false;
-let pickerT, embedbox;
+let pickerT;
 
 function init(plgn) {
-
     thisPlugin = plgn;
 
-    thisPlugin.isActive = true;
     ({ node } = plgn.window);
     ({ refs } = getRefs(node));  // refs refreshed.
 
-    loadPlugins().then(mods => ({ pickerT, embedbox } = mods)).then(() => {
-        // this has to be done even everytime opens,  since embedbox may have been closed by another plugin
-        
-        switchCoordsDiv(vars.showCoords);
-        // will not be added more than once
-        pickerT.drag(updateRings, 10);
+    // important to close picker
+    bcast.fire('rqstClose', 'picker');
 
-    })
+    //??? should I open my picker if windy picker was open
+
+    pickerT = getPickerMarker();
+
+    // add[Right|Left]Plugin is done by focus
 
     if (hasHooks) return;
 
+    //  click stuff
+    singleclick.singleclick.on(name, pickerT.openMarker);
+    bcast.on('pluginOpened', onPluginOpened);
+    bcast.on('pluginClosed', onPluginClosed);
+
     insertGlobalCss();
 
-    // whatever windy listeners are needed
+    pickerT.onDrag(updateRings);
     picker.on('pickerOpened', updateRings);
     picker.on('pickerMoved', updateRings);
     picker.on('pickerClosed', removeAllRings);
 
+    // needed???
     thisPlugin.closeCompletely = closeCompletely;
 
     hasHooks = true;
 }
 
 function closeCompletely() {
-    thisPlugin.isActive = false;
-    removeGlobalCss();
-    bcast.fire('rqstClose', name);
+    console.log("RINGS closing completley");
 
-    // remove all listeners
-    pickerT.dragOff(updateRings);
+    // click stuff
+    singleclick.release(name, "high");
+    singleclick.singleclick.off(name, pickerT.openMarker);
+    bcast.off('pluginOpened', onPluginOpened);
+    bcast.off('pluginClosed', onPluginClosed);
+
+    removeGlobalCss();
+
+    pickerT.offDrag(updateRings);
     picker.off('pickerOpened', updateRings);
     picker.off('pickerMoved', updateRings);
     picker.off('pickerClosed', removeAllRings);
@@ -65,12 +75,27 @@ function closeCompletely() {
     // clean up map layers
     removeAllRings();
 
+    bcast.fire('rqstClose', name);
     hasHooks = false;
+}
+
+//  VERY important:
+function onPluginOpened(p) {
+    // other external plugins do not get priority back,  when later reopened,  like better sounding.
+    if (W.plugins[p].listenToSingleclick && W.plugins[p].singleclickPriority == 'high') {
+        singleclick.register(p, 'high');
+    }
+}
+function onPluginClosed(p) {
+    // if the plugin closed has high singleclickpriority,  it returns single click to default picker,
+    // so instead register this plugin as priority high
+    console.log("on plugin closed", p, "this plugin gets priority", name);
+    if (p !== name && W.plugins[p].singleclickPriority == 'high') singleclick.register(name, 'high');
 }
 
 export { init, closeCompletely }
 
-///// boiler plate ends here
+// rest of plugin:
 
 import { map } from '@windy/map';
 import store from '@windy/store';
@@ -90,7 +115,8 @@ store.insert('windy-plugin-rings-radii', {
 let storedRadii = store.get('windy-plugin-rings-radii');
 let rings = storedRadii.map(r => ({ radius: r }));
 
-const showCoordsAr = ['Do not show coords', 'Picker Left', 'Picker Right', 'Embedded box', 'Pane'];
+/** possible places wehre coords are shown */
+const showCoordsAr = ['Do not show coords', 'Picker Left', 'Picker Right', 'Pane'];
 store.insert('windy-plugin-rings-show-coords', {
     def: showCoordsAr[0],
     allowed: showCoordsAr,
@@ -107,32 +133,38 @@ function updateRadius() {
 function updateRings(pos) {
     pos = pos || (pickerT && pickerT.getParams());
     if (!pos) return;
-    let ll = vars.vincenty ? new LatLonV(pos.lat, pos.lon) : new LatLon(pos.lat, pos.lon);
+
+    let { vincenty } = vars;
+    let ll = vincenty ? new LatLonV(pos.lat, pos.lon) : new LatLon(pos.lat, pos.lon);
 
     let maxIx = rings.reduce((a, e, i) => e.radius > a.v ? { v: e.radius, i } : a, { v: 0, i: 0 }).i;
 
     let north, south, east, west;
 
     rings.forEach((r, i) => {
-        r.cs = [...Array(37).keys()].map(b => {
-            let pnt = ll.destinationPoint(r.radius, b * 10);
+        r.cs = [...Array(vincenty ? 37 : 5).keys()].map(b => {
+            b = b * (vincenty ? 10 : 90);
+            let pnt = ll.destinationPoint(r.radius, b);
             if (i == maxIx) {
                 if (b == 0) north = pnt;
-                else if (b == 9) east = pnt;
-                else if (b == 18) south = pnt;
-                else if (b == 27) west = pnt;
+                else if (b == 90) east = pnt;
+                else if (b == 180) south = pnt;
+                else if (b == 270) west = pnt;
             }
             return [pnt.lat, pnt.lon];
         })
+
+        if (r.line && ((!vincenty && r.cs.length == 5) || (vincenty && r.cs.length == 37))) {
+            r.line?.remove();
+            r.line = null;
+        }
+
         if (!r.line) {
-            r.line = new L.Polyline(r.cs, {
-                color: 'white',
-                weight: 1,
-                opacity: 0.5,
-                smoothFactor: 1
-            }).addTo(map);
+            let opts = { color: 'white', weight: 1, opacity: 0.5, smoothFactor: 1, radius: r.radius, fill: false };
+            r.line = (vincenty ? L.polyline(r.cs, opts) : L.circle(ll, opts)).addTo(map);
         } else {
-            r.line.setLatLngs(r.cs)
+            if (vincenty) { r.line.setLatLngs(r.cs); }
+            else { r.line.setLatLng(ll); r.line.setRadius(r.radius); }
         }
     })
 
@@ -172,32 +204,24 @@ function removeAllRings() {
         r.line?.remove();
         r.line = null;
     })
-    //also clear pane and embedbox;
+    //also clear pane 
     if (vars.showCoords == 'Pane') refs.pickerPos.innerHTML = '';
-    else if (vars.showCoords == 'Embedded box') embedRefs.coords.innerHTML = '';
 }
 
 /** switches to either the picker, pane or embedded box,  then updates the rings,  if the picker is open */
 function switchCoordsDiv(coordDiv) {
+    if (!pickerT) return;
 
     // 1st clear everything
     pickerT.remLeftPlugin(name);
     pickerT.remRightPlugin(name);
-    embedbox.setHTML('');
     refs.pickerPos.innerHTML = '';
 
-    let htmlPromise = Promise.resolve();
     if (coordDiv == "Picker Left") pickerT.addLeftPlugin(name);
     else if (coordDiv == "Picker Right") pickerT.addRightPlugin(name);
-    else if (coordDiv == "Embedded box") {
-        htmlPromise = embedbox.setHTML('<div data-ref="coords"></div>', name).then(({ refs }) => embedRefs = refs);
-    }
 
-    // unfortunately embedBox.setHTML returns a promise,  with the node and refs,  thus have to wait for it to resolve
-    htmlPromise.then(() => {
-        let c = pickerT.getParams();
-        if (c) updateRings(c);
-    })
+    let c = pickerT.getParams();
+    if (c) updateRings(c);
 
     store.set('windy-plugin-rings-show-coords', coordDiv);
 }
