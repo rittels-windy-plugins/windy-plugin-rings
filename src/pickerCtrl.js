@@ -1,4 +1,4 @@
-import { $, copy2clipboard, debounce, logError, normalizelatLon, throttle } from '@windy/utils';
+import { $, debounce, throttle } from '@windy/utils';
 
 
 export function addPickerCtrl(marker) {
@@ -22,6 +22,7 @@ export function addPickerCtrl(marker) {
         let transformedCbf = e => {
             let latLon = e.latlng || marker._latlng || null;
             if (latLon) latLon.lon = latLon.lng;
+            latLon.source = 'custom-picker';
             cbf(latLon);
         }
         let throttledCbf = throttle(transformedCbf, interv);
@@ -44,12 +45,15 @@ export function addPickerCtrl(marker) {
         checkIfMustClose();
     }
 
+    // I am not sure if these are useful,  will also be managed by picker eventer,  then with source: 'custom-picker'
+
     marker.onOpen = (cbf) => {
         if (openFxs.find(f => f.cbf == cbf)) return;
         //should receive latLon;
         let transformedCbf = e => {
             let latLon = (e.lat !== undefined && e.lon !== undefined) ? e : marker._latlng || null;
             if (latLon) latLon.lon = latLon.lng;
+            latLon.source = 'custom-picker';
             cbf(latLon);
         }
         openFxs.push({
@@ -68,7 +72,6 @@ export function addPickerCtrl(marker) {
     marker.onClose = (cbf) => {
         if (closeFxs.find(f => f.cbf == cbf)) return;
         closeFxs.push({ cbf });
-        // will be opened by closeMarker in picker
     }
 
     marker.offClose = (cbf) => {

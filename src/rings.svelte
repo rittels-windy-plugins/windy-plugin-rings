@@ -23,6 +23,7 @@
         }}
     ></div>
     <div bind:this={cornerHandle} data-ref="cornerHandle" class="corner-handle"></div>
+    <div bind:this={cornerHandleTop} data-ref="cornerHandleTop" class="corner-handle-top"></div>
 
     <div class="scrollable">
         <div class="plugin__title">Rings</div>
@@ -122,7 +123,13 @@
     import store from '@windy/store';
 
     import { init, closeCompletely } from './rings_main.js';
-    import { addDrag, showInfo, getWrapDiv } from './infoWinUtils.js';
+    import {
+        addDrag,
+        showInfo,
+        getWrapDiv,
+        makeBottomRightHandle,
+        makeTopLeftHandle,
+    } from './infoWinUtils.js';
     import { getPickerMarker } from './picker.js';
 
     import config from './pluginConfig';
@@ -131,8 +138,9 @@
     const thisPlugin = plugins[name];
     let node;
     let mainDiv;
-    let cornerHandle;
+    let cornerHandle, cornerHandleTop;
     let closeButtonClicked;
+    let marker;
 
     function focus() {
         for (let p in plugins) {
@@ -143,7 +151,7 @@
         thisPlugin.isFocused = true;
 
         // now do whatever,  for this plugin,  only addRightPlugin and addLeftPlugin ;
-        let marker = getPickerMarker();
+        marker = getPickerMarker();
 
         let coordsPlace = store.get('windy-plugin-rings-show-coords');
         if (coordsPlace == 'Picker Right') marker?.addRightPlugin(name);
@@ -164,10 +172,8 @@
         const wrapDiv = getWrapDiv();
         wrapDiv.appendChild(mainDiv);
 
-        addDrag(cornerHandle, (x, y) => {
-            mainDiv.style.height = y + 'px';
-            mainDiv.style.width = x + 'px';
-        });
+        makeBottomRightHandle(cornerHandle, mainDiv);
+        makeTopLeftHandle(cornerHandleTop, mainDiv);
 
         //// this should not be needed later
         node.querySelector(':scope > .closing-x').addEventListener(
@@ -190,8 +196,9 @@
         document.body.classList.remove(`on${name}-info`);
 
         //  this should not be needed later,   whole plugin can then be moved into svelte
-        if (!closeButtonClicked) setTimeout(() => thisPlugin.open());
-        else closeCompletely();
+        //if (!closeButtonClicked) setTimeout(() => thisPlugin.open());
+        //else 
+        closeCompletely();
     });
 
     import {
@@ -242,5 +249,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1714604011543';
+    @import 'rings.less?1715149382998';
 </style>

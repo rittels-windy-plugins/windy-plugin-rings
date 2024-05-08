@@ -1,0 +1,87 @@
+.on@{name} {
+    #open-in-app {
+        display: none;
+    }
+
+    &.on@{name}-info {
+        #search {
+            display: none;
+        }
+
+        #plugin-developer-mode {
+            left: 400px;
+
+            #device-mobile &,
+            #device-tablet & {
+
+                display: none;
+
+            }
+        }
+
+        #device-mobile &,
+        #device-tablet & {
+            #logo-wrapper {
+                display: none;
+            }
+        }
+
+        #device-mobile &,
+        #device-tablet & {
+            .animated-windy-logo {
+                animation: enter-and-stay 1.5s ease-in-out;
+                display  : block;
+                opacity  : 1;
+            }
+        }
+    }
+}
+
+#@{name}-info {
+
+    display: none;
+
+    .on@{name}.on@{name}-info & {
+
+        display: block;
+    }
+
+    .ondetail &,
+    .onrplanner &,
+    .onmenu &,
+    .onstation &,
+    .onairport &,
+    .onwebcams-detail &,
+    .onradiosonde & {
+
+        #device-mobile &,
+        #device-tablet & {
+
+            max-height    : 0px !important;
+            padding-top   : 0px !important;
+            padding-bottom: 0px !important;
+
+            .corner-handle,
+            .corner-handle-top,
+            .closing-x {
+                display: none !important;
+            }
+        }
+    }
+
+    #device-mobile &,
+    #device-tablet & {
+
+        right           : 8px;
+        width           : auto;
+        background-color: #404040ff;
+
+        .closing-x {
+
+            right    : 0px;
+            top      : 0px;
+            margin   : 5px;
+            font-size: 20px;
+        }
+    }
+}

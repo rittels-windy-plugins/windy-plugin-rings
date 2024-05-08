@@ -5,6 +5,7 @@ import plugins from '@windy/plugins';
 import bcast from '@windy/broadcast';
 import store from '@windy/store';
 import { t } from '@windy/trans';
+import rs from '@windy/rootScope';
 
 import { $, copy2clipboard, debounce, logError, normalizeLatLon, throttle } from '@windy/utils';
 import { getLatLonInterpolator } from '@windy/interpolator';
@@ -87,9 +88,10 @@ function getPickerMarker() {
             );
 
             marker.setLatLng([latLon.lat, latLon.lon || latLon.lng]);
-            
+
             // if already on  map,  not repeated by Leaflet
             marker.addTo(map);
+
             marker.isOpen = true;
             displayLatLon = store.get('latlon');
 
@@ -120,6 +122,7 @@ function getPickerMarker() {
 
             updateInterFun();
             onMetricChanged();
+            //getValuesAndRender();
 
             // add listeners.
             bcast.on('redrawFinished', updateInterFun,);
@@ -146,6 +149,7 @@ function getPickerMarker() {
             map.off('drag', checkIfMapCrossedAntiM);
             marker.isOpen = false;
             clickHandlersAdded = false;
+            setPickerLocation(null);
 
             marker.closeFxs?.forEach(f => f.cbf(latLon));
         }
@@ -212,17 +216,15 @@ function wrapLn(ln) {
 }
 
 function setPickerLocation(coords) {
-    let lat = coords.lat;
-    let lon = wrapLn(coords.lon);
+    let pickerLoc = coords ? { lat: coords.lat, lon: wrapLn(coords.lng) } : null;
 
-    store.set('pickerLocation', { lat, lon });
+    store.set('pickerLocation', pickerLoc);
 }
 
 function getValuesAndRender() {
     // this method is throttled and debounced, marker can be closed already, chech it for to be sure
     const coords = marker.getLatLng();
     const values = interpolateLatLon({ lat: coords.lat, lon: coords.lng });
-
     render(values, coords);
     setPickerLocation(coords);
 }
@@ -230,6 +232,7 @@ function getValuesAndRender() {
 const throttledUpdate = throttle(getValuesAndRender, 300);
 const debouncedUpdate = debounce(getValuesAndRender, 150);
 
+/** actually really debounced update */
 function update() {
     if (isZooming) {   // todo not useing isZooming.   figure out what is point of isZooming??
         return;
@@ -240,15 +243,21 @@ function update() {
 
 function getInterpolator() {
     invalidateInterFun();
-    return new Promise(resolve => {
-        getLatLonInterpolator().then((interFun) => {
-            interpolateLatLon = interFun;
-            resolve();
-        });
+    return new Promise((resolve, rej) => {
+        // in mobile,  if mobile picker is open,  getInterpolator inside the mobile picker does nothing,  unless within a setTimeout.
+        setTimeout(() => {
+            getLatLonInterpolator().then((interFun) => {
+                //console.log("try to show the func");
+                //console.dir(interFun); 
+                interpolateLatLon = interFun;
+                resolve();
+            })
+        }, 0);
     });
 }
 
 function updateInterFun() {
+    //console.log("update interfun called");
     getInterpolator().then(() => update());
 }
 
