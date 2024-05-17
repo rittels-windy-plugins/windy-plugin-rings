@@ -251,7 +251,7 @@ function getInterpolator() {
                 //console.dir(interFun); 
                 interpolateLatLon = interFun;
                 resolve();
-            })
+            }, 10)
         }, 0);
     });
 }

@@ -1,3 +1,6 @@
+// default width,  can be overwritten by global.less,  only used to size for tablet
+@width: 400px;
+
 .on@{name} {
     #open-in-app {
         display: none;
@@ -82,6 +85,14 @@
             top      : 0px;
             margin   : 5px;
             font-size: 20px;
+        }
+    }
+}
+
+@media only screen and (min-width: calc(@width + 20px)) {
+    #device-tablet {
+        #@{name}-info {
+            width: @width;
         }
     }
 }

@@ -121,6 +121,7 @@
     import bcast from '@windy/broadcast';
     import plugins from '@windy/plugins';
     import store from '@windy/store';
+    import { isTablet } from '@windy/rootScope';
 
     import { init, closeCompletely } from './rings_main.js';
     import {
@@ -129,6 +130,7 @@
         getWrapDiv,
         makeBottomRightHandle,
         makeTopLeftHandle,
+        embedForTablet
     } from './infoWinUtils.js';
     import { getPickerMarker } from './picker.js';
 
@@ -180,6 +182,10 @@
             'click',
             () => (closeButtonClicked = true),
         );
+
+        //// should also not be needed later,  fix for tablet
+        // change embed to small if tablet
+        embedForTablet(thisPlugin);
         //
 
         focus();
@@ -197,7 +203,7 @@
 
         //  this should not be needed later,   whole plugin can then be moved into svelte
         //if (!closeButtonClicked) setTimeout(() => thisPlugin.open());
-        //else 
+        //else
         closeCompletely();
     });
 
@@ -249,5 +255,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1715149382998';
+    @import 'rings.less?1715671770907';
 </style>

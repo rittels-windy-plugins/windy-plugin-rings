@@ -1,8 +1,11 @@
+
+import { isTablet } from '@windy/rootScope';
+
+
 /** 
  * @params el: sensitive element
  * @params onDrag: cbf when dragged,  receives:  hor pixel pos in parent, ver pixel pos in parent, and the original position of the parent of the sens element 
  **/
-
 function addDrag(el, onDrag) {
     let topMargin = parseInt(getComputedStyle(el)['margin-top']);
     let leftMargin = parseInt(getComputedStyle(el)['margin-left']);
@@ -61,7 +64,7 @@ function showInfo(name) {
     }
 }
 
-function makeBottomRightHandle(el, div) {
+function makeBottomRightHandle(el, div, cb) {
     addDrag(el, (x, y, pp) => {
         if (y + pp.pTop > window.innerHeight - 1) y = window.innerHeight - 1 - pp.pTop;
         if (x + pp.pLeft > window.innerWidth - 1) x = window.innerWidth - 1 - pp.pLeft;
@@ -69,7 +72,7 @@ function makeBottomRightHandle(el, div) {
         let cl = div.offsetLeft;
         /** current top edge */
         let ct = div.offsetTop;
-        
+
         let t = pp.pTop + y - 75;
         if (t > ct) t = ct;
         if (t < 1) {
@@ -90,10 +93,12 @@ function makeBottomRightHandle(el, div) {
         div.style.width = w + 'px';
         div.style.left = l + 'px';
         div.style.top = t + 'px';
+
+        if (cb) cb();
     });
 }
 
-function makeTopLeftHandle(el, div) {
+function makeTopLeftHandle(el, div, cb) {
     addDrag(el, (x, y, pp) => {
         /** current right edge */
         let cr = div.offsetLeft + div.offsetWidth;
@@ -113,6 +118,8 @@ function makeTopLeftHandle(el, div) {
         div.style.top = t + 'px';
         div.style.width = w + 'px';
         div.style.height = h + 'px';
+
+        if (cb) cb();
     });
 }
 
@@ -126,4 +133,21 @@ function getWrapDiv() {
     return wrapDiv;
 }
 
-export { addDrag, showInfo, getWrapDiv, makeTopLeftHandle, makeBottomRightHandle };
+/** this does not belong with infoWinUtils, but should be temporary.  
+ * It places the embedded plugin in small when tablet is used 
+ * */
+function embedForTablet(thisPlugin) {
+    let node = thisPlugin.window.node;
+    if (isTablet && thisPlugin.pane=='embedded') {
+        node.classList.remove('fg-white', 'bg-transparent-blur', 'rounded-box');
+        node.classList.add('plugin-mobile-bottom-small');
+        document
+            .querySelector('[data-plugin="bottom-below-controls-mobile"]')
+            .appendChild(node);
+        node.style.width = 'auto';
+        node.style.margin = '0px';
+        thisPlugin.pane = 'small-bottom-bottom';
+    }
+}
+
+export { addDrag, showInfo, getWrapDiv, makeTopLeftHandle, makeBottomRightHandle, embedForTablet };
