@@ -82,7 +82,7 @@ function closeCompletely() {
     bcast.fire('rqstClose', name);
 
     pickerT = null;  // in case plugin re-opened
-    
+
     hasHooks = false;
 }
 
@@ -204,7 +204,7 @@ function updateRings(pos) {
 }
 
 function removeRing(ring) {
-    ring.line.remove();
+    if (ring && ring.line) ring.line.remove();
 }
 
 function removeAllRings() {

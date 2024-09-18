@@ -1,5 +1,5 @@
 // default width,  can be overwritten by global.less,  only used to size for tablet
-@width: 400px;
+@width: 450px;
 
 .on@{name} {
     #open-in-app {
@@ -12,7 +12,7 @@
         }
 
         #plugin-developer-mode {
-            left: 400px;
+            left: 500px;
 
             #device-mobile &,
             #device-tablet & {
@@ -59,10 +59,9 @@
 
         #device-mobile &,
         #device-tablet & {
-
-            max-height    : 0px !important;
             padding-top   : 0px !important;
             padding-bottom: 0px !important;
+            max-height    : 0px !important;
 
             .corner-handle,
             .corner-handle-top,
@@ -74,15 +73,13 @@
 
     #device-mobile &,
     #device-tablet & {
-
         right           : 8px;
         width           : auto;
         background-color: #404040ff;
 
         .closing-x {
-
-            right    : 0px;
             top      : 0px;
+            right    : 0px;
             margin   : 5px;
             font-size: 20px;
         }
@@ -94,5 +91,20 @@
         #@{name}-info {
             width: @width;
         }
+    }
+}
+
+.add-scroll-bar {
+    &::-webkit-scrollbar {
+        width: 8px;
+        height:8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(128, 128, 128, .5);
+    }
+
+    &::-webkit-scrollbar-track {
+        background: 0 0;
     }
 }

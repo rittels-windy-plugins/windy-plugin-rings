@@ -1,12 +1,15 @@
 
 import { isTablet } from '@windy/rootScope';
+import bcast from '@windy/broadcast';
+import { $ } from '@windy/utils';
 
 
 /** 
  * @params el: sensitive element
  * @params onDrag: cbf when dragged,  receives:  hor pixel pos in parent, ver pixel pos in parent, and the original position of the parent of the sens element 
+ * @params onDragEnd:  cbf when drag ended.  
  **/
-function addDrag(el, onDrag) {
+function addDrag(el, onDrag, onDragEnd = () => { }) {
     let topMargin = parseInt(getComputedStyle(el)['margin-top']);
     let leftMargin = parseInt(getComputedStyle(el)['margin-left']);
     let top, topOffs, left, leftOffs;
@@ -24,13 +27,17 @@ function addDrag(el, onDrag) {
         initialParentPos = { pTop, pLeft, pWidth, pHeight };
         mouseDown = true;
     };
-    const handleEnd = () => {
+    const handleEnd = (e) => {
         mouseDown = false;
         document.removeEventListener('mouseup', handleEnd);
         document.removeEventListener('mousemove', handleMove);
+        let pos = e.targetTouches ? e.targetTouches[0] : e;
+        console.log('end', e);
+        onDragEnd(leftOffs + pos.pageX, topOffs + pos.pageY, initialParentPos)
     };
     const handleCancel = e => {
         console.log('cancel', e);
+        onDragEnd();
     };
     /** provides to onDrag fx:  pix moved hor, pix moved ver, original pos of parent of el */
     const handleMove = e => {
@@ -52,19 +59,34 @@ function addDrag(el, onDrag) {
 }
 
 function showInfo(name) {
+
     let bdy = document.body;
+    const msg = name => {
+        const el = $(`#${name}-info`);
+        if (!el) return;
+        const { offsetLeft: left, offsetTop: top, offsetWidth: width, offsetHeight: height } = el;
+        return { left, top, width, height, name };
+    }
+
     if (bdy.classList.contains(`on${name}-info`)) {
+        bcast.fire("infoWinClosed", msg(name));  //bcast BEFORE removed
         bdy.classList.remove(`on${name}-info`);
     } else {
         bdy.classList.forEach(c => {
             let m = c.match(/onwindy-plugin-.*-info/);
-            if (m) bdy.classList.remove(m[0]);
+            if (m) {
+                bcast.fire("infoWinClosed", msg(m[0].replace('_info', '')));  //bcast BEFORE removed
+                bdy.classList.remove(m[0]);
+            }
         });
         bdy.classList.add(`on${name}-info`);
+        bcast.fire("infoWinOpened", msg(name));
     }
 }
 
-function makeBottomRightHandle(el, div, cb) {
+function makeBottomRightHandle(el, div, callback) {
+    const { id } = div;
+    const name = id.replace('-info', '');
     addDrag(el, (x, y, pp) => {
         if (y + pp.pTop > window.innerHeight - 1) y = window.innerHeight - 1 - pp.pTop;
         if (x + pp.pLeft > window.innerWidth - 1) x = window.innerWidth - 1 - pp.pLeft;
@@ -94,11 +116,14 @@ function makeBottomRightHandle(el, div, cb) {
         div.style.left = l + 'px';
         div.style.top = t + 'px';
 
-        if (cb) cb();
+        bcast.fire("infoWinResized", { left: l, top: t, width: w, height: h, id, name });
+        if (callback) callback();  // propably better to use bcast
     });
 }
 
-function makeTopLeftHandle(el, div, cb) {
+function makeTopLeftHandle(el, div, callback) {
+    const { id } = div;
+    const name = id.replace('-info', '');
     addDrag(el, (x, y, pp) => {
         /** current right edge */
         let cr = div.offsetLeft + div.offsetWidth;
@@ -119,7 +144,8 @@ function makeTopLeftHandle(el, div, cb) {
         div.style.width = w + 'px';
         div.style.height = h + 'px';
 
-        if (cb) cb();
+        bcast.fire("infoWinResized", { left: l, top: t, width: w, height: h, id, name });
+        if (callback) callback();
     });
 }
 
@@ -138,7 +164,7 @@ function getWrapDiv() {
  * */
 function embedForTablet(thisPlugin) {
     let node = thisPlugin.window.node;
-    if (isTablet && thisPlugin.pane=='embedded') {
+    if (isTablet && thisPlugin.pane == 'embedded') {
         node.classList.remove('fg-white', 'bg-transparent-blur', 'rounded-box');
         node.classList.add('plugin-mobile-bottom-small');
         document

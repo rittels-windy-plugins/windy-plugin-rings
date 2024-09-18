@@ -16,7 +16,9 @@ import { emitter as pickerEmitter } from '@windy/picker';
 import { addPickerCtrl } from './pickerCtrl.js';
 import { insertPickerCss, removePickerCss } from './pickerCss.js';
 
-/** Leaflet marker,  add stuff to it */
+/**
+ * Leaflet marker with added methods
+ */
 let marker;
 
 let formatDir, pickerContentEl, isZooming, interpolateLatLon, displayLatLon;
@@ -35,7 +37,26 @@ function checkIfMapCrossedAntiM() {
     }
 }
 
-/** return leaflet marker already made,  or initialize it and add custom methods  */
+/** return leaflet marker already made,  or initialize it and add custom methods  
+ * @returns
+ *  The marker has the following methods:
+ * - openMarker(latLon)
+ * - removeMarker()
+ * - getParams() : returns latLon with source:'custom-picker'
+ * - destroyMarker() : Called internally when custom-picker is no longer used.  Detected with checkIfMustClose()
+ * - onDrag(cbf,intv)
+ * - offDrag(cbf)
+ * - onOpen(cbf)
+ * - offOpen(cbf)
+ * - onClose(cbf)
+ * - offClose(cbf)
+ * - fillLeftDiv(string | html div element, pickerBckgCol = false )
+ * - fillRightDiv(string | html)
+ * - addLeftPlugin(plugin-name)
+ * - remLeftPlugin(plugin-name)
+ * - getLeftPlugin(): returns plugin-name
+ * - same for RightPlugin 
+*/
 function getPickerMarker() {
 
     if (plugins['custom-picker-for-windy-plugins']) {
@@ -81,11 +102,7 @@ function getPickerMarker() {
 
         marker.openMarker = (latLon) => {
             latLon.source = "custom-picker";
-
-            pickerEmitter.emit(
-                map.hasLayer(marker) ? 'pickerMoved' : 'pickerOpened',
-                latLon
-            );
+            const emitMessage = map.hasLayer(marker) ? 'pickerMoved' : 'pickerOpened';
 
             marker.setLatLng([latLon.lat, latLon.lon || latLon.lng]);
 
@@ -132,6 +149,12 @@ function getPickerMarker() {
             map.on('drag', checkIfMapCrossedAntiM);
 
             marker.openFxs?.forEach(f => f.cbf(latLon));
+
+            // do this last
+            pickerEmitter.emit(
+                emitMessage,
+                latLon
+            );
         }
 
         marker.removeMarker = (e) => {
@@ -164,7 +187,10 @@ function getPickerMarker() {
             };
         }
 
-        /** remove picker marker,  destroy marker object and remove the css   */
+        /** remove picker marker,  destroy marker object and remove the css  
+         * This is called internally,  when no listeners attached to picker and the 
+         * left and rightPlugins arrays are empty 
+         */
         marker.destroyMarker = () => {
             if (marker?.isOpen) marker.removeMarker();
             marker = null;
