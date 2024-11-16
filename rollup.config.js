@@ -102,19 +102,17 @@ export default {
         commonjs(),
         transformCodeToESMPlugin(),
         process.env.SERVE !== 'false' &&
-        serve({
-            contentBase: 'dist',
-            host: 'localhost',
-            port,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            https: {
-                key: keyPEM,
-                cert: certificatePEM,
-            },
-        }),
+            serve({
+                contentBase: 'dist',
+                host: '0.0.0.0',
+                port,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                https: {
+                    key: keyPEM,
+                    cert: certificatePEM,
+                },
+            }),
     ],
 };
-
-
