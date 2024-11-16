@@ -2,6 +2,8 @@
 import { isTablet } from '@windy/rootScope';
 import bcast from '@windy/broadcast';
 import { $ } from '@windy/utils';
+import http from '@windy/http';
+import config from './pluginConfig.js';
 
 
 /** 
@@ -176,4 +178,26 @@ function embedForTablet(thisPlugin) {
     }
 }
 
-export { addDrag, showInfo, getWrapDiv, makeTopLeftHandle, makeBottomRightHandle, embedForTablet };
+// Other stuff used by all my plugins:
+
+// Show message:
+
+function showMsg(messageDiv, m, timeout = 30 * 1000) {
+    messageDiv.innerHTML = m;
+    messageDiv.classList.remove('hidden');
+    if (timeout) setTimeout(() => messageDiv.classList.add('hidden'), timeout);
+    //else do not remove the message 
+}
+
+// Check version
+
+function checkVersion(messageDiv) {
+    http.get('/articles/plugins/list').then(({ data }) => {
+        let newVersion = data.find(e => e.name == config.name).version;
+        if (newVersion !== config.version) {
+            showMsg(messageDiv, `Please Update to version: <b>${newVersion}</b><br>Uninstall the current version (${config.version}) first and then install version ${newVersion} from the Plugin Gallery.`, 60000)
+        }
+    })
+}
+
+export { addDrag, showInfo, getWrapDiv, makeTopLeftHandle, makeBottomRightHandle, embedForTablet, checkVersion, showMsg };
