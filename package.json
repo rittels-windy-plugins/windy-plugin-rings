@@ -1,6 +1,6 @@
 {
     "name": "windy-plugin-template",
-    "version": "2.0.2",
+    "version": "3.0.0",
     "description": "Template for developing Windy Plugins",
     "main": "dist/plugin.min.js",
     "type": "module",
@@ -26,7 +26,7 @@
     },
     "homepage": "https://docs.windy-plugins.com/",
     "dependencies": {
-        "@windycom/plugin-devtools": "^1.0.8",
+        "@windycom/plugin-devtools": "^2.0.0",
         "less":"4.2.0",
         "ts-import":"^5.0.0-beta.0",
         "rollup-plugin-watch-globs":"2.0.1"    
