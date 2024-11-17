@@ -3,7 +3,7 @@ import { isTablet } from '@windy/rootScope';
 import bcast from '@windy/broadcast';
 import { $ } from '@windy/utils';
 import http from '@windy/http';
-import config from './pluginConfig.js';
+import config from '../pluginConfig.js';
 
 
 /** 

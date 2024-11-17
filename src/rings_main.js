@@ -6,10 +6,12 @@ import bcast from '@windy/broadcast';
 import { $, getRefs } from '@windy/utils';
 import { emitter as picker } from '@windy/picker';
 import * as singleclick from '@windy/singleclick';
+import loc from '@windy/location';
 
 import config from './pluginConfig';
 import { insertGlobalCss, removeGlobalCss } from './globalCss.js';
-import { getPickerMarker } from './picker.js';
+import { getPickerMarker } from './picker/picker.js';
+import { checkVersion, showMsg } from './utils/infoWinUtils.js';
 
 const { name } = config;
 
@@ -17,7 +19,15 @@ const { name } = config;
 let thisPlugin, refs, node;
 
 let hasHooks = false;
+
 let pickerT;
+
+let loggerTO;
+function logMessage(msg) {
+    if (!store.get('consent').analytics) return;
+    fetch(`https://www.flymap.org.za/windy-logger/logger.htm?name=${name}&message=${msg}`, { cache: 'no-store' })
+        .then(console.log);
+}
 
 function init(plgn) {
     thisPlugin = plgn;
@@ -36,10 +46,17 @@ function init(plgn) {
 
     if (hasHooks) return;
 
-    //  click stuff
+    // log message
+    let devMode = loc.getURL().includes('windy.com/dev');
+    logMessage(devMode ? 'open_dev' : 'open_user');
+    if (!devMode) loggerTO = setTimeout(logMessage, 1000 * 60 * 3, '3min');
+    //
+
+    //  single click stuff
     singleclick.singleclick.on(name, pickerT.openMarker);
     bcast.on('pluginOpened', onPluginOpened);
     bcast.on('pluginClosed', onPluginClosed);
+    //
 
     insertGlobalCss();
 
@@ -47,6 +64,8 @@ function init(plgn) {
     picker.on('pickerOpened', updateRings);
     picker.on('pickerMoved', updateRings);
     picker.on('pickerClosed', removeAllRings);
+
+    checkVersion(refs.messageDiv);
 
     // needed???
     thisPlugin.closeCompletely = closeCompletely;
@@ -57,6 +76,8 @@ function init(plgn) {
 function closeCompletely() {
     console.log("RINGS closing completley");
 
+    clearTimeout(loggerTO);
+
     // click stuff
     singleclick.release(name, "high");
     singleclick.singleclick.off(name, pickerT.openMarker);
@@ -65,16 +86,17 @@ function closeCompletely() {
 
     removeGlobalCss();
 
+    // other plugins will try to defocus this plugin.
+    delete thisPlugin.focus;
+    delete thisPlugin.defocus;
+    //
+
     pickerT.offDrag(updateRings);
     picker.off('pickerOpened', updateRings);
     picker.off('pickerMoved', updateRings);
     picker.off('pickerClosed', removeAllRings);
     pickerT.remLeftPlugin(name);
     pickerT.remRightPlugin(name);
-
-    // other plugins will try to defocus this plugin.
-    delete thisPlugin.focus;
-    delete thisPlugin.defocus;
 
     // clean up map layers
     removeAllRings();
@@ -147,7 +169,7 @@ function updateRings(pos) {
 
     let maxIx = rings.reduce((a, e, i) => e.radius > a.v ? { v: e.radius, i } : a, { v: 0, i: 0 }).i;
 
-    let north, south, east, west;
+    let north = { lat: pos.lat }, south = { lat: pos.lat }, east = { lon: pos.lon }, west = { lon: pos.lon };
 
     rings.forEach((r, i) => {
         r.cs = [...Array(vincenty ? 37 : 5).keys()].map(b => {

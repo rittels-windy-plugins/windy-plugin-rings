@@ -1,4 +1,4 @@
-@import 'infoWin_style_svelte.less';
+@import 'utils/infoWin_style_svelte.less';
 
 @name  : windy-plugin-rings;
 //@width : 300px;
@@ -42,5 +42,20 @@
         input[type="range"] {
             width: 94%;
         }
+    }
+}
+
+.embed-window {
+    .checkbox::before {
+        margin-right: 0px;
+    }
+
+    [data-ref="messageDiv"] {
+        margin-top: 3px;
+        font-size : 0.8em;
+    }
+
+    .hidden {
+        display: none
     }
 }

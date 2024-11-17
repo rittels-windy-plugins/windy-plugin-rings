@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+//#!/usr/bin/env node
 
 // I am sure there is a better way to do this,  but this works for me.  
 // changes in the less file imported in to the .svelte file,  does not trigger the rebuild.

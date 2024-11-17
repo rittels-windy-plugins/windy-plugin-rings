@@ -1,4 +1,4 @@
-<div>
+<div class="embed-window">
     <span
         class="checkbox"
         class:checkbox--off={!thisPlugin.isFocused}
@@ -13,6 +13,7 @@
         }}
         style:cursor="pointer">Show rings settings</span
     >
+    <div data-ref="messageDiv" class="hidden"></div>
 </div>
 
 <div bind:this={mainDiv} id={`${name}-info`} class="bg-transparent dark-content">
@@ -130,9 +131,9 @@
         getWrapDiv,
         makeBottomRightHandle,
         makeTopLeftHandle,
-        embedForTablet
-    } from './infoWinUtils.js';
-    import { getPickerMarker } from './picker.js';
+        embedForTablet,
+    } from './utils/infoWinUtils.js';
+    import { getPickerMarker } from './picker/picker.js';
 
     import config from './pluginConfig';
     const { title, name } = config;
@@ -201,10 +202,10 @@
         mainDiv.remove();
         document.body.classList.remove(`on${name}-info`);
 
-        //  this should not be needed later,   whole plugin can then be moved into svelte
-        //if (!closeButtonClicked) setTimeout(() => thisPlugin.open());
-        //else
-        closeCompletely();
+        ////  this should not be needed later,   whole plugin can then be moved into svelte.  thisPlugin.open()  requires an object
+        if (!closeButtonClicked) setTimeout(() => thisPlugin.open({}));
+        else closeCompletely();
+        ////
     });
 
     import {
@@ -255,5 +256,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1731744425479';
+    @import 'rings.less?1731861661685';
 </style>
