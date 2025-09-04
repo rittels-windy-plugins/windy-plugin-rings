@@ -1,14 +1,14 @@
 const config = {
     name: 'windy-plugin-rings',
-    version: '0.2.7',
+    version: '0.2.9',
     icon: '⭕',
     title: 'Rings    ',
     description: 'Show range rings around the picker.',
     author: 'Rittels',
-    repository: 'github.com/rittels-windy-plugins/windy-plugin-rings.git',
+    repository: 'https://www.github.com/rittels-windy-plugins/windy-plugin-rings.git',
     desktopUI: 'embedded',
     mobileUI: 'small',
-    listenToSingleclick: true
-    //routerPath: '/my-plugin',
+    listenToSingleclick: true,
+    routerPath: '/rings',
 };
 export default config;

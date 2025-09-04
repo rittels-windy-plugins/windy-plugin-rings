@@ -1,4 +1,5 @@
 # windy-plugin-rings
 
+Show distance rings around the picker.
 
-This is a simple plugin that serves as a boilerplate for most of my plugins.  
+Now added the option to change units,  between kilometres,  statute miles and nautical miles.

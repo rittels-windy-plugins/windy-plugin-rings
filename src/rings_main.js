@@ -7,13 +7,15 @@ import { $, getRefs } from '@windy/utils';
 import { emitter as picker } from '@windy/picker';
 import * as singleclick from '@windy/singleclick';
 import loc from '@windy/location';
+import metrics from '@windy/metrics';
 
 import config from './pluginConfig';
 import { insertGlobalCss, removeGlobalCss } from './globalCss.js';
-import { getPickerMarker } from './picker/picker.js';
+import { getPickerMarker } from 'custom-windy-picker';
 import { checkVersion, showMsg } from './utils/infoWinUtils.js';
 
 const { name } = config;
+const {log} = console;
 
 // these will be set at init
 let thisPlugin, refs, node;
@@ -24,6 +26,7 @@ let pickerT;
 
 let loggerTO;
 function logMessage(msg) {
+    if (!store.get('consent')) return;
     if (!store.get('consent').analytics) return;
     fetch(`https://www.flymap.org.za/windy-logger/logger.htm?name=${name}&message=${msg}`, { cache: 'no-store' })
         .then(console.log);
@@ -65,7 +68,7 @@ function init(plgn) {
     picker.on('pickerMoved', updateRings);
     picker.on('pickerClosed', removeAllRings);
 
-    checkVersion(refs.messageDiv);
+    //checkVersion(refs.messageDiv);
 
     // needed???
     thisPlugin.closeCompletely = closeCompletely;
@@ -132,19 +135,29 @@ import store from '@windy/store';
 import LatLonV from 'geodesy/latlon-ellipsoidal-vincenty.js';
 import LatLon from 'geodesy/latlon-spherical.js';
 
-let vars = { vincenty: false, iVal: 50000 };
+let vars = { vincenty: false, iVal: 50, units: metrics.distance.description[0] };
 
 let embedRefs;
 
-store.insert('windy-plugin-rings-radii', {
-    def: [50000],
-    allowed: (ar) => ar.every(e => typeof e === 'number' && e > 0),
+store.insert('windy-plugin-rings-vals', {
+    def: [50],
+    allowed: (ar) => ar.length==0 || ar.every(e => typeof e === 'number' && e > 0),
     save: true
 });
-let storedRadii = store.get('windy-plugin-rings-radii');
-let rings = storedRadii.map(r => ({ radius: r }));
 
-/** possible places wehre coords are shown */
+store.insert('windy-plugin-rings-units', {
+    def: "km",
+    allowed: metrics.distance.description,
+    save: true
+});
+vars.units = store.get('windy-plugin-rings-units');
+
+let storedRingVals = store.get('windy-plugin-rings-vals');
+let rings = storedRingVals.map(v => ({ val: v, radius: metrics.distance.backConv[vars.units].conversion(v) }));
+
+
+
+/** possible places where coords are shown */
 const showCoordsAr = ['Do not show coords', 'Picker Left', 'Picker Right', 'Pane'];
 store.insert('windy-plugin-rings-show-coords', {
     def: showCoordsAr[0],
@@ -153,9 +166,17 @@ store.insert('windy-plugin-rings-show-coords', {
 });
 vars.showCoords = store.get('windy-plugin-rings-show-coords');
 
+
+
+function updateUnits(){
+    store.set('windy-plugin-rings-units', vars.units);
+    updateRings();
+}
+
 /** store radii and then updateRings */
 function updateRadius() {
-    store.set('windy-plugin-rings-radii', rings.map(e => e.radius));
+    store.set('windy-plugin-rings-vals', rings.map(e => e.val));
+    rings.map(e=>e.radius = metrics.distance.backConv[vars.units].conversion(e.val));
     updateRings();
 }
 
@@ -172,6 +193,7 @@ function updateRings(pos) {
     let north = { lat: pos.lat }, south = { lat: pos.lat }, east = { lon: pos.lon }, west = { lon: pos.lon };
 
     rings.forEach((r, i) => {
+        
         r.cs = [...Array(vincenty ? 37 : 5).keys()].map(b => {
             b = b * (vincenty ? 10 : 90);
             let pnt = ll.destinationPoint(r.radius, b);
@@ -225,11 +247,14 @@ function updateRings(pos) {
     }
 }
 
+/** only remove the actual ring from the map */
 function removeRing(ring) {
     if (ring && ring.line) ring.line.remove();
+    
 }
 
 function removeAllRings() {
+    // this is for closing the plugin,  and not removing individual rings,  do not need to store
     rings.forEach(r => {
         r.line?.remove();
         r.line = null;

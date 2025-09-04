@@ -1,4 +1,9 @@
-// default width,  can be overwritten by global.less,  only used to size for tablet
+// Note for myself:  Hardlinks,  changing this affects the other plugins.   Use global.less,  which will overwrite this.
+// infoWin_style_global.less is applied first then,  global.less,  then infoWin_style_svelte.less,  then pluginname.svelte
+// This is important to understand how it is overwritten.
+
+// default width,  can be overwritten by global.less.
+
 @width: 450px;
 
 .on@{name} {
@@ -16,9 +21,7 @@
 
             #device-mobile &,
             #device-tablet & {
-
                 display: none;
-
             }
         }
 
@@ -33,19 +36,17 @@
         #device-tablet & {
             .animated-windy-logo {
                 animation: enter-and-stay 1.5s ease-in-out;
-                display  : block;
-                opacity  : 1;
+                display: block;
+                opacity: 1;
             }
         }
     }
 }
 
 #@{name}-info {
-
     display: none;
 
     .on@{name}.on@{name}-info & {
-
         display: block;
     }
 
@@ -55,34 +56,41 @@
     .onstation &,
     .onairport &,
     .onwebcams-detail &,
-    .onradiosonde & {
-
+    .onradiosonde &,
+    .onexternal-plugins & {
         #device-mobile &,
         #device-tablet & {
-            padding-top   : 0px !important;
+            padding-top: 0px !important;
             padding-bottom: 0px !important;
-            max-height    : 0px !important;
+            max-height: 0px !important;
+            overflow: hidden !important;
 
+            /*
             .corner-handle,
             .corner-handle-top,
             .closing-x {
                 display: none !important;
             }
+                */
         }
     }
 
     #device-mobile &,
     #device-tablet & {
-        right           : 8px;
-        width           : auto;
+        right: 8px;
+        width: auto;
         background-color: #404040ff;
 
         .closing-x {
-            top      : 0px;
-            right    : 0px;
-            margin   : 5px;
+            top: 0px;
+            right: 0px;
+            margin: 5px;
             font-size: 20px;
         }
+    }
+
+    .hidden {
+        display: none;
     }
 }
 
@@ -95,13 +103,15 @@
 }
 
 .add-scroll-bar {
+    overflow-y: scroll;
+
     &::-webkit-scrollbar {
         width: 8px;
-        height:8px;
+        height: 8px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background: rgba(128, 128, 128, .5);
+        background: rgba(128, 128, 128, 0.5);
     }
 
     &::-webkit-scrollbar-track {
