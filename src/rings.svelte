@@ -282,5 +282,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1756962407454';
+    @import 'rings.less?1757663028652';
 </style>
