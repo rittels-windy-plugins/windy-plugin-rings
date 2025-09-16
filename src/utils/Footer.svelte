@@ -19,8 +19,19 @@
                 {config.version}
                 {infoWinWidth < 400 ? '' : ' by ' + config.author}
             </div>
-            <a class="button" class:hidden={hideCoffee} href='https://buymeacoffee.com/rittels' target="_blank">
-                <svg height="13" stroke="white" fill="rgba(255,221,0,0.3)" viewBox="0 0 32 32" width="13" xmlns="http://www.w3.org/2000/svg"
+            <a
+                class="button"
+                class:hidden={hideCoffee}
+                href="https://buymeacoffee.com/rittels"
+                target="_blank"
+            >
+                <svg
+                    height="13"
+                    stroke="white"
+                    fill="rgba(255,221,0,0.3)"
+                    viewBox="0 0 32 32"
+                    width="13"
+                    xmlns="http://www.w3.org/2000/svg"
                     ><path
                         d="m9.197 0-1.619 3.735h-2.407v3.359h.921l.943 5.975h-1.473l1.948 10.973 1.249-.015 1.256 7.973h11.891l.083-.531 1.172-7.443 1.188.015 1.943-10.973h-1.407l.937-5.975h1.011v-3.359h-2.557l-1.625-3.735zm.704 1.073h12.057l1.025 2.375h-14.115zm-3.666 3.73h19.525v1.228h-19.525zm.604 9.333h18.183l-1.568 8.823-7.536-.079-7.511.079z"
                     /></svg
@@ -30,7 +41,11 @@
                     &nbsp;Buy me a Coffee!
                 {/if}
             </a>
-            <a class="button" href={'https://rittels-windy-plugins.github.io' + infoRouter} target="_blank">{infoWinWidth > 285 ? 'Info' : 'i'}</a>
+            <a
+                class="button"
+                href={'https://rittels-windy-plugins.github.io' + infoRouter}
+                target="_blank">{infoWinWidth > 285 ? 'Info' : 'i'}</a
+            >
             <div class="button" on:click={() => (isFullscreen = toggleFullscreen())}>
                 {#if isFullscreen}
                     <span data-icon=""></span>
@@ -38,7 +53,16 @@
                     <span data-icon=""></span>
                 {/if}
             </div>
-            <div class="button" on:click={() => bcast.fire('rqstOpen', 'external-plugins')}>
+            <div
+                class="button"
+                on:click={() => {
+                    bcast.fire('rqstOpen', 'external-plugins');
+                    if (rs.isMobileOrTablet){
+                        // rather close the infowindow if plugin gallery is opened,  else becomes confusing,  when you open something else,  and it is still here.
+                        document.body.classList.remove(`on${config.name}-info`);
+                    }
+                }}
+            >
                 <span data-icon=""></span>
                 {#if infoWinWidth > 285}
                     &nbsp;Plugins{/if}
@@ -49,12 +73,15 @@
 
 <script lang="ts">
     // @ts-nocheck
+    import  rs from '@windy/rootScope';
 
     const { log } = console;
     import { onDestroy, onMount } from 'svelte';
     import bcast from '@windy/broadcast';
     import config from '../pluginConfig.js';
     import { toggleFullscreen } from './infoWinUtils.js';
+    import { rtrnSelf } from '@windy/client/Metric.js';
+    import { isMobileOrTablet } from '@windy/client/rootScope.js';
     let infoWinWidth, isFullscreen;
     let footerOpen = true;
     let hideCoffee = false;
