@@ -8,9 +8,9 @@ You can select the units for the rings,  also whether the rings should be calcul
 
 ### Path to this plugin:
 
-Once the plugin has been installed,  open it with the following url:
+Once the plugin has been installed,  open it with the following URL:
 
-[windy.com/plugin/rings](https://www.windy.com/rings)
+[windy.com/plugin/rings](https://www.windy.com/plugin/rings)
   
 
 
