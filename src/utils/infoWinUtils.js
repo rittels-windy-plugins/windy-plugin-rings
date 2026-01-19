@@ -25,7 +25,12 @@ function addDrag(el, onDrag, onDragEnd = () => {}) {
         let pos = e.targetTouches ? e.targetTouches[0] : e;
         topOffs = top - pos.pageY;
         leftOffs = left - pos.pageX;
-        let { offsetTop: pTop, offsetLeft: pLeft, offsetWidth: pWidth, offsetHeight: pHeight } = el.parentElement;
+        let {
+            offsetTop: pTop,
+            offsetLeft: pLeft,
+            offsetWidth: pWidth,
+            offsetHeight: pHeight,
+        } = el.parentElement;
         initialParentPos = { pTop, pLeft, pWidth, pHeight };
         mouseDown = true;
     };
@@ -234,7 +239,11 @@ function checkVersion(messageDiv) {
 }
 
 function toggleFullscreen() {
-    let fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+    let fs =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
     if (fs) closeFullscreen();
     else openFullscreen();
     return !fs;
