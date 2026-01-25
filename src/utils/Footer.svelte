@@ -15,9 +15,9 @@
         {/if}
         <div class="bottom-row">
             <div class:hidden={infoWinWidth < 360}>
-                {infoWinWidth < 500 ? 'version' : config.name}
+                {infoWinWidth < 520 ? 'version' : config.name}
                 {config.version}
-                {infoWinWidth < 400 ? '' : ' by ' + config.author}
+                {infoWinWidth < 410 ? '' : ' by ' + config.author}
             </div>
             <a
                 class="button"
@@ -41,23 +41,25 @@
                     &nbsp;Buy me a Coffee!
                 {/if}
             </a>
-            <a
-                class="button"
-                href={'https://rittels-windy-plugins.github.io' + infoRouter}
-                target="_blank">{infoWinWidth > 285 ? 'Info' : 'i'}</a
-            >
-            <div class="button" on:click={() => (isFullscreen = toggleFullscreen())}>
-                {#if isFullscreen}
-                    <span data-icon=""></span>
-                {:else}
-                    <span data-icon=""></span>
-                {/if}
-            </div>
+            {#if infoWinWidth > 90}
+                <a
+                    class="button"
+                    href={'https://rittels-windy-plugins.github.io' + infoRouter}
+                    target="_blank">{infoWinWidth > 285 ? 'Info' : 'i'}</a
+                >
+                <div class="button" on:click={() => (isFullscreen = toggleFullscreen())}>
+                    {#if isFullscreen}
+                        <span data-icon=""></span>
+                    {:else}
+                        <span data-icon=""></span>
+                    {/if}
+                </div>
+            {/if}
             <div
                 class="button"
                 on:click={() => {
                     bcast.fire('rqstOpen', 'external-plugins');
-                    if (rs.isMobileOrTablet){
+                    if (rs.isMobileOrTablet) {
                         // rather close the infowindow if plugin gallery is opened,  else becomes confusing,  when you open something else,  and it is still here.
                         document.body.classList.remove(`on${config.name}-info`);
                     }
@@ -73,7 +75,7 @@
 
 <script lang="ts">
     // @ts-nocheck
-    import  rs from '@windy/rootScope';
+    import rs from '@windy/rootScope';
 
     const { log } = console;
     import { onDestroy, onMount } from 'svelte';

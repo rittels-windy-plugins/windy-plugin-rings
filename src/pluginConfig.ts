@@ -2,7 +2,7 @@ import type { ExternalPluginConfig } from '@windy/interfaces';
 
 const config: ExternalPluginConfig = {
     name: 'windy-plugin-rings',
-    version: '0.2.11',
+    version: '0.2.12',
     icon: '⭕',
     title: 'Rings    ',
     description: 'Show range rings around the picker.',
@@ -11,7 +11,7 @@ const config: ExternalPluginConfig = {
     desktopUI: 'embedded',
     mobileUI: 'small',
     listenToSingleclick: true,
-    routerPath: '/rings',
+    routerPath: '/rings/:lat?/:lon?/:time?',
 };
 
 export default config;

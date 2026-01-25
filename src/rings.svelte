@@ -140,6 +140,7 @@
     import store from '@windy/store';
     import { isTablet } from '@windy/rootScope';
     import metrics from '@windy/metrics';
+    import {map} from '@windy/map';
 
     import Footer from './utils/Footer.svelte';
     import { init, closeCompletely } from './rings_main.js';
@@ -192,7 +193,7 @@
 
     onMount(() => {
         init(thisPlugin);
-        node = thisPlugin.window.node;
+        node = document.getElementById('plugin-' + thisPlugin.ident);
 
         const wrapDiv = getWrapDiv();
         wrapDiv.appendChild(mainDiv);
@@ -218,7 +219,19 @@
         rs = rings;
     });
 
-    export const onopen = _params => {};
+    export const onopen = _params => {
+        if (_params && 'lon' in _params && !isNaN(_params.lat) && !isNaN(_params.lon)) {
+            // Important:  onopen may actually occur before onmount (race condition).   So getPickerMarker here also.
+            marker = getPickerMarker();
+            marker.openMarker(_params);
+            map.setView(_params);
+
+            // if _params from context menu,  will not contain time.
+            if (_params.time && new Date(_params.time)) {
+                store.set('timestamp', new Date(_params.time).getTime());
+            }
+        }
+    };
 
     onDestroy(() => {
         mainDiv.remove();
@@ -282,5 +295,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1758004550338';
+    @import 'rings.less?1769348452911';
 </style>

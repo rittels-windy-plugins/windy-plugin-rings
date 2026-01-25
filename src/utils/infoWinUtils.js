@@ -186,7 +186,7 @@ function getWrapDiv() {
  * It places the embedded plugin in small when tablet is used
  * */
 function embedForTablet(thisPlugin) {
-    let node = thisPlugin.window.node;
+    let node = $('#' + thisPlugin.ident);
     if (isTablet && thisPlugin.pane == 'embedded') {
         node.classList.remove('fg-white', 'bg-transparent-blur', 'rounded-box');
         node.classList.add('plugin-mobile-bottom-small');

@@ -10,7 +10,7 @@ You can select the units for the rings,  also whether the rings should be calcul
 
 Once the plugin has been installed,  open it with the following URL:
 
-[windy.com/plugin/rings](https://www.windy.com/plugin/rings)
+[windy.com/plugin/rings/lat/lon/time](https://www.windy.com/plugin/rings)
   
 
 
