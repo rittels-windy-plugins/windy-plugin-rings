@@ -36,7 +36,7 @@ function logMessage(msg) {
 function init(plgn) {
     thisPlugin = plgn;
 
-    node = $('#plugin-' + plgn.ident);
+    node = document.getElementById('plugin-' + thisPlugin.ident);
     ({ refs } = getRefs(node)); // refs refreshed.
 
     // important to close picker

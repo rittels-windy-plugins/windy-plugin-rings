@@ -38,8 +38,13 @@ function addDrag(el, onDrag, onDragEnd = () => {}) {
         mouseDown = false;
         document.removeEventListener('mouseup', handleEnd);
         document.removeEventListener('mousemove', handleMove);
-        let pos = e.targetTouches ? e.targetTouches[0] : e;
-        //console.log('end', e);
+        let pos =
+            e.targetTouches && e.targetTouches.length
+                ? e.targetTouches[0]
+                : e.changedTouches && e.changedTouches.length
+                  ? e.changedTouches[0]
+                  : e;
+       
         onDragEnd(leftOffs + pos.pageX, topOffs + pos.pageY, initialParentPos);
     };
     const handleCancel = e => {
