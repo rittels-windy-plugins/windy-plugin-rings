@@ -25,12 +25,7 @@ function addDrag(el, onDrag, onDragEnd = () => {}) {
         let pos = e.targetTouches ? e.targetTouches[0] : e;
         topOffs = top - pos.pageY;
         leftOffs = left - pos.pageX;
-        let {
-            offsetTop: pTop,
-            offsetLeft: pLeft,
-            offsetWidth: pWidth,
-            offsetHeight: pHeight,
-        } = el.parentElement;
+        let { offsetTop: pTop, offsetLeft: pLeft, offsetWidth: pWidth, offsetHeight: pHeight } = el.parentElement;
         initialParentPos = { pTop, pLeft, pWidth, pHeight };
         mouseDown = true;
     };
@@ -39,12 +34,8 @@ function addDrag(el, onDrag, onDragEnd = () => {}) {
         document.removeEventListener('mouseup', handleEnd);
         document.removeEventListener('mousemove', handleMove);
         let pos =
-            e.targetTouches && e.targetTouches.length
-                ? e.targetTouches[0]
-                : e.changedTouches && e.changedTouches.length
-                  ? e.changedTouches[0]
-                  : e;
-       
+            e.targetTouches && e.targetTouches.length ? e.targetTouches[0] : e.changedTouches && e.changedTouches.length ? e.changedTouches[0] : e;
+
         onDragEnd(leftOffs + pos.pageX, topOffs + pos.pageY, initialParentPos);
     };
     const handleCancel = e => {
@@ -191,8 +182,10 @@ function getWrapDiv() {
  * It places the embedded plugin in small when tablet is used
  * */
 function embedForTablet(thisPlugin) {
-    let node = $('#' + thisPlugin.ident);
-    if (isTablet && thisPlugin.pane == 'embedded') {
+    let node = $('#plugin-' + thisPlugin.ident);
+    console.log('node', node);
+    console.log('is', isTablet, thisPlugin.pane);
+    if (isTablet && (thisPlugin.pane == 'embedded' || thisPlugin.pane == 'small-bottom-bottom')) {
         node.classList.remove('fg-white', 'bg-transparent-blur', 'rounded-box');
         node.classList.add('plugin-mobile-bottom-small');
         document.querySelector('[data-plugin="bottom-below-controls-mobile"]').appendChild(node);
@@ -244,11 +237,7 @@ function checkVersion(messageDiv) {
 }
 
 function toggleFullscreen() {
-    let fs =
-        document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.mozFullScreenElement ||
-        document.msFullscreenElement;
+    let fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
     if (fs) closeFullscreen();
     else openFullscreen();
     return !fs;

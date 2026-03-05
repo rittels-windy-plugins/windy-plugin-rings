@@ -2,7 +2,7 @@ import type { ExternalPluginConfig } from '@windy/interfaces';
 
 const config: ExternalPluginConfig = {
     name: 'windy-plugin-rings',
-    version: '0.3.0',
+    version: '0.3.1',
     icon: '⭕',
     title: 'Rings    ',
     description: 'Show range rings around the picker.',
