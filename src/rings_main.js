@@ -137,7 +137,9 @@ import store from '@windy/store';
 import LatLonV from 'geodesy/latlon-ellipsoidal-vincenty.js';
 import LatLon from 'geodesy/latlon-spherical.js';
 
-let vars = { vincenty: false, iVal: 50, units: metrics.distance.description[0] };
+let distances = Object.keys(W.metrics.distance.conv);
+
+let vars = { vincenty: false, iVal: 50, units: 'km' };
 
 let embedRefs;
 
@@ -149,7 +151,7 @@ store.insert('windy-plugin-rings-vals', {
 
 store.insert('windy-plugin-rings-units', {
     def: 'km',
-    allowed: metrics.distance.description,
+    allowed: distances,
     save: true,
 });
 vars.units = store.get('windy-plugin-rings-units');
@@ -160,6 +162,7 @@ let rings = storedRingVals.map(v => ({
     radius: metrics.distance.backConv[vars.units].conversion(v),
 }));
 
+log('RINGS', rings);
 /** possible places where coords are shown */
 const showCoordsAr = ['Do not show coords', 'Picker Left', 'Picker Right', 'Pane'];
 store.insert('windy-plugin-rings-show-coords', {

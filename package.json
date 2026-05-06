@@ -20,6 +20,6 @@
         "ts-import": "^5.0.0-beta.0",
         "rollup-plugin-watch-globs": "2.0.1",
         "geodesy": "2.4.0",
-        "custom-windy-picker":"^1.0.17"
+        "custom-windy-picker":"^1.0.20"
     }
 }

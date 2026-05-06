@@ -85,7 +85,7 @@
     import { rtrnSelf } from '@windy/client/Metric.js';
     import { isMobileOrTablet } from '@windy/client/rootScope.js';
     let infoWinWidth, isFullscreen;
-    let footerOpen = true;
+    export let footerOpen = true;
     let hideCoffee = false;
     export let onFooterClick = () => {};
     export let topRow;
@@ -151,9 +151,10 @@
             flex-grow: 1;
             color: rgba(220, 220, 210);
             &.menu-button {
+                font-size: 1.2em;
                 background-color: rgba(0, 0, 0, 0);
                 min-width: auto;
-                max-width: 1em;
+                max-width: 1.2em;
                 position: absolute;
                 bottom: -2px;
                 left: -5px;

@@ -96,7 +96,7 @@
             <div>
                 <div for="inc-range">Units:</div>
                 <div>
-                    {#each metrics.distance.description as u}
+                    {#each Object.keys(metrics.distance.conv) as u}
                         <div
                             class="button"
                             class:selected={u == units}
@@ -155,6 +155,18 @@
     import { getPickerMarker } from 'custom-windy-picker';
 
     import config from './pluginConfig';
+
+    import {
+        rings,
+        vars,
+        updateRings,
+        updateRadius,
+        removeRing,
+        switchCoordsDiv,
+        showCoordsAr,
+    } from './rings_main.js';
+
+    
     const { title, name } = config;
 
     const { log } = console;
@@ -219,7 +231,9 @@
         rs = rings;
     });
 
+    
     export const onopen = _params => {
+        
         if (_params && 'lon' in _params && !isNaN(_params.lat) && !isNaN(_params.lon)) {
             // Important:  onopen may actually occur before onmount (race condition).   So getPickerMarker here also.
             marker = getPickerMarker();
@@ -232,6 +246,7 @@
             }
         }
     };
+    
 
     onDestroy(() => {
         mainDiv.remove();
@@ -243,16 +258,7 @@
         ////
     });
 
-    import {
-        rings,
-        vars,
-        updateRings,
-        updateRadius,
-        removeRing,
-        switchCoordsDiv,
-        showCoordsAr,
-    } from './rings_main.js';
-
+    
     let rangeVals = [];
     for (let i = 0, step = 100, v = 100; i <= 300; i++) {
         rangeVals.push(v / 1000);
@@ -295,5 +301,5 @@
 </script>
 
 <style lang="less">
-    @import 'rings.less?1771003396231';
+    @import 'rings.less?1778106141766';
 </style>

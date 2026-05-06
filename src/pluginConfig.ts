@@ -2,9 +2,9 @@ import type { ExternalPluginConfig } from '@windy/interfaces';
 
 const config: ExternalPluginConfig = {
     name: 'windy-plugin-rings',
-    version: '0.3.1',
+    version: '0.3.2',
     icon: '⭕',
-    title: 'Rings    ',
+    title: 'Picker Rings',
     description: 'Show range rings around the picker.',
     author: 'Rittels',
     repository: 'https://www.github.com/rittels-windy-plugins/windy-plugin-rings.git',
